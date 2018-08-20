@@ -49,3 +49,7 @@ def index():
     sql += str(lista[0]) + ")"
     #run_query(sql);
     return sql
+    
+@app.route('/holamundo')
+def hello():
+    return "Holista desde flask"
