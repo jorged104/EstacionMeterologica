@@ -34,12 +34,12 @@ def index():
     #data = run_query("select * FROM Clima");
     dato = flask.request.args.get('datos')
     hora = time.strftime("%H:%M:%S")
-    fecha = time.strftime("%x")
+    fecha = time.strftime("%Y-%m-%d")
     lista = dato.split(',')
     #insert INTO Clima(Fecha,Hora,Latitud,Longitud,Temperatura,Radiacion,Presion,Humedad)
     #values(DATE_FORMAT('01/08/18', "%d/%m/%y"),'21:00:00',5555,5555,23.00,25156156,810,49);
     sql = "insert INTO Clima(Fecha,Hora,Latitud,Longitud,Temperatura,Radiacion,Presion,Humedad)"
-    sql += "values(DATE_FORMAT("+ "'" + fecha +"'"+", \"%d/%m/%y\"),"
+    sql += "values('"+str(fecha)+"',"
     sql +=  "'" + str(hora) + "'" + ","
     sql += str(LATITUD) + ","
     sql += str(LONGITUD) + ","
@@ -52,9 +52,9 @@ def index():
 
 @app.route('/getDatos')
 def get():
-    sql = " SELECT * FROM Clima";
+    sql = "SELECT * FROM Clima";
     query = run_query(sql);
-    return query;
+    return str(query);
 
 
 @app.route('/holamundo')
