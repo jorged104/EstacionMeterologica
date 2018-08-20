@@ -60,3 +60,9 @@ def get():
 @app.route('/holamundo')
 def hello():
     return "Holista desde flask"
+
+if __name__ == '__main__':
+  import uuid
+  app.secret_key = str(uuid.uuid4())
+  app.debug = True
+  app.run()
