@@ -47,9 +47,16 @@ def index():
     sql += str(lista[3]) + ","
     sql += str(lista[2]) + ","
     sql += str(lista[0]) + ")"
-    #run_query(sql);
+    run_query(sql);
     return sql
-    
+
+@app.route('/getDatos')
+def get():
+    sql = " SELECT * FROM Clima";
+    query = run_query(sql);
+    return query;
+
+
 @app.route('/holamundo')
 def hello():
     return "Holista desde flask"
