@@ -9,7 +9,7 @@
 SFE_BMP180 pressure;
 
 const bool debug = false;  // define el debug por el puerto serial
-String server = "192.168.1.9";
+String server = "104.196.6.9";
 //String server = "192.168.43.249";
 int pinUV = A0;
 int valorSensor = 0;
@@ -35,12 +35,12 @@ void setup() {
     Serial.println("BMP180 init fail (disconnected?)\n\n");
     while(1); // Pause forever.
    }
-  /*escribir("AT+RST",2000,"OK");
+  escribir("AT+RST",2000,"OK");
   delay(1000);
   if(escribir("AT+CWMODE=1",1000,"OK"))
    resultado("MODO 1 " );
   delay(500);
-  escribir("AT+CWJAP=\"CLARO_65E146\",\"d50DaEeEe0\"",10000,"OK");
+  escribir("AT+CWJAP=\"Pixel_4151\",\"100tifiko\"",10000,"OK");
   delay(5000);
   while(!escribir("AT+CIPSTATUS",1000,"2"))
   {
@@ -49,13 +49,14 @@ void setup() {
   }
   if(escribir("AT+CIPMUX=1",1000,"OK"))
    resultado("MODO MULTIPLES CONECCIONES " );
-   */
+   
 }
 
 void loop() {
 
    sensar();
-  // enviarDatos(String(dht.temperature_C),String(tension),String(presion),String(dht.humidity));
+   enviarProcessing(String(dht.temperature_C),String(tension),String(presion),String(dht.humidity));  //Enviar informacion a processing 
+  enviarDatos(String(dht.temperature_C),String(tension),String(presion),String(dht.humidity));
    int cont =0 ;  
    while(cont < 60 )  //Delay de un minuto para enviar informacion al servidor
    {
@@ -74,24 +75,26 @@ void sensar()
 }
 void enviarDatos(String temperatura,String uv,String presion,String humedad)
 {
-  if ( escribir("AT+CIPSTART=4,\"TCP\",\"" + server + "\",5000",3000,"OK") )
+  if ( escribir("AT+CIPSTART=4,\"TCP\",\"" + server + "\",80",3000,"OK") )
   {
     resultado(" CONECTADO AL SERVIDOR ...... ");
-    delay(2000);
-    String peticionHTTP= "GET /agregar?datos="+temperatura+","+uv+","+presion+","+humedad+" HTTP/1.1";
+    //delay(2000);
+    //String peticionHTTP= "GET /agregar?datos="+temperatura+","+uv+","+presion+","+humedad+" HTTP/1.1\r\nHost: 104.196.6.9";
+    String peticionHTTP = "GET /agregar?datos="+temperatura+","+uv+","+presion+","+humedad+" HTTP/1.1\r\nHost: "+server+"\r\nConnection: keep-alive\r\nCache-Control: max-age=0\r\nUpgrade-Insecure-Requests: 1\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\nAccept-Encoding: gzip, deflate\r\nAccept-Language: es-ES,es;q=0.9,en;q=0.8\r\n\r\n";
     String tam = "AT+CIPSEND=4," +  String(peticionHTTP.length());
     resultado(tam);
     bool enviar = escribir(tam,10000,">");
-    delay(2000);
+    //delay(2000);
     if(enviar )
     {
       resultado("LISTO PARA ENVIAR ......");
       bool peticion = escribir(peticionHTTP,10000,"SEND OK");
-      delay(2000);
+      //delay(2000);
       if (peticion)
         resultado("INFORMACION ENVIARDA....");
       else
         resultado("INFOMRACION NO ENVIADA...");  
+        
       escribir("AT+CIPCLOSE=4",1000,"OK");   
     }
     else
